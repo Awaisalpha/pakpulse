@@ -1,0 +1,233 @@
+/* Load all of Tailwind (its reset, theme and utility classes) */
+@import "tailwindcss";
+
+/*
+  Design tokens. Every --color-* name here becomes a Tailwind class,
+  e.g. --color-page → bg-page, --color-text-muted → text-text-muted.
+  Contrast was measured against white (#FFFFFF) and the page background (#F7F7F5):
+  all text and country colours pass WCAG AA (4.5:1 or more).
+*/
+@theme {
+  /* Neutrals */
+  --color-page: #f7f7f5; /* calm page background */
+  --color-surface: #ffffff; /* cards and chart panel */
+  --color-pill: #ecebe7; /* the navbar's centre pill, a step darker than the page; main text on it: 14.4:1 */
+  --color-border: #e2e0db; /* dividers and card outlines (not for text) */
+  --color-border-input: #8a867f; /* outline of form fields, which must stand out: 3.6:1 on white, 3.2:1 on the canvas */
+  --color-text: #1c1b19; /* main text: 17.2:1 on white */
+  /* secondary text, a neutral grey with no warm tint (the old #57544e read as brown):
+     7.5:1 on white, 7.0:1 on the page, 6.6:1 on the canvas, 6.3:1 on the pill */
+  --color-text-muted: #555555;
+
+  /* Country colours. Also distinguishable for red-green and blue-yellow colour blindness.
+     Pakistan is a deep emerald, not the flag's dark green (#01411C): the flag green is so dark
+     it reads as near-black in a chart. The emerald is kept darker than India's pink and
+     Bangladesh's brown, so with red-green colour blindness (where green and brown can look
+     alike) the three still differ in lightness. Line style, dot shape and labels differ too. */
+  --color-pak: #065f46; /* Pakistan: 7.7:1 on white */
+  --color-ind: #b0478a; /* India: 5.1:1 on white */
+  --color-bgd: #8a6a2e; /* Bangladesh: 5.0:1 on white */
+  /* Text on Pakistan's filled KPI card */
+  --color-on-pak: #ffffff; /* main text: 7.7:1 */
+  --color-on-pak-muted: #c9ead9; /* secondary text (years, captions): 6.0:1 */
+  /* A very soft green (8% Pakistan green on white) behind Pakistan's column in the "Latest values" card.
+     On it: text 15.2:1, text-muted 6.6:1, Pakistan's bar 6.8:1 */
+  --color-pak-tint: #ebf2f0;
+
+  /* Primary buttons ("Open explorer", "Explore the data"): a mid emerald, the same family as Pakistan */
+  --color-primary: #047857; /* white text on it: 5.5:1; on the page 5.1:1, on the dark CTA card 3.1:1 */
+  --color-primary-hover: #065f46; /* darker on hover: white text 7.7:1 */
+  --color-primary-focus: #059669; /* focus ring: 3.5:1 on the page, 4.6:1 on the dark CTA card */
+  --color-on-primary: #ffffff;
+
+  /* Accent: blue for links, the logo and other highlights */
+  --color-accent: #2052b8; /* 7.1:1 on white */
+  --color-accent-hover: #17408f; /* darker on hover */
+  --color-on-accent: #ffffff; /* text on the accent: 7.1:1, on hover 9.6:1 */
+
+  /* Dashboard canvas: the grey area behind the explorer's white cards.
+     Muted text on it: 6.7:1; accent on it: 6.3:1 */
+  --color-canvas: #f2f2ef;
+
+  /* Footer area: a step darker than the page, so the footer reads as its own zone */
+  --color-footer: #efeee9;
+
+  /* The dark call-to-action card above the footer, and what sits on it */
+  --color-cta: #1c1b19; /* charcoal card background (same value as --color-text) */
+  --color-on-cta: #f7f7f5; /* heading on the card */
+  --color-on-cta-muted: #c9c6bf; /* sentence and caption on the card */
+  --color-cta-panel: #292825; /* the chart widget inside the card, one step lighter than the card */
+  --color-cta-grid: #3d3c38; /* the widget's faint horizontal gridlines (decoration, carries no text) */
+  --color-cta-axis: #5c5a55; /* the widget's chart baseline and the tooltip's outline (decoration) */
+  --color-cta-skeleton: #3a3935; /* grey blocks while the widget loads */
+  --color-pak-on-dark: #6ee7b7; /* Pakistan's green, lightened for dark surfaces: 9.7:1 on the panel */
+  --color-accent-on-dark: #9db8f0; /* the accent blue, lightened for dark surfaces (icons, illustrations) */
+  --color-focus-on-dark: #9db8f0; /* focus ring on dark surfaces; the blue ring is too dark there */
+
+  /* Decoration and loading (no contrast requirement: they carry no text) */
+  --color-pattern: #e2e0db; /* the faint dot grid behind the hero */
+  --color-skeleton: #e9e7e2; /* grey placeholder bars while data loads */
+  /* Soft tints of India's and Bangladesh's colours, for bars next to Pakistan's solid green bar.
+     Each bar is labelled with text, so they have no contrast requirement. */
+  --color-ind-soft: color-mix(in oklab, var(--color-ind) 45%, white);
+  --color-bgd-soft: color-mix(in oklab, var(--color-bgd) 45%, white);
+
+  /* Features section: India's and Bangladesh's colours lightened for the charcoal panels (same hues).
+     On --color-cta-panel: India 6.9:1, Bangladesh 7.4:1 (Pakistan's --color-pak-on-dark: 9.7:1) */
+  --color-ind-on-dark: #e59ac8;
+  --color-bgd-on-dark: #d9b26a;
+  /* Features section: the large faint number above each title (decoration, carries no meaning) */
+  --color-numeral-faint: #dedbd4;
+
+  /* About the data: the dark scrim behind the source text on the photo tile (86% charcoal).
+     Light text on it, measured over the photo's brightest pixel: on-cta 11.1:1, on-cta-muted 6.9:1 */
+  --color-photo-scrim: rgb(28 27 25 / 0.86);
+  /* About the data: the photo's height as a banner on phones */
+  --spacing-photo-banner-sm: 15rem; /* 240px */
+
+  /* About the data: one hue per tile, so each tile has its own identity.
+     Enrolment violet (hue 310), Year teal (hue 204), Gaps indigo (hue 283).
+     None is a flag colour; violet sits 34° from India's pink.
+     -tint:  the picture area. On each: text 15:1, text-muted 6.5:1, Pakistan 6.7:1, India 4.5:1, Bangladesh 4.4:1
+     -solid: the deep colour behind the title and sentence */
+  --color-about-enrolment-tint: #f4effa;
+  --color-about-enrolment-solid: #743c97;
+  --color-about-year-tint: #eaf4f4;
+  --color-about-year-solid: #0d5c63;
+  --color-about-gaps-tint: #efeefb;
+  --color-about-gaps-solid: #4a3aa8;
+  /* Text on the -solid colours: white 7.4:1 or more, light grey 5.9:1 or more */
+  --color-on-fill: #ffffff; /* titles */
+  --color-on-fill-muted: #e6e6e6; /* sentences */
+
+  /* Explore by topic: hover backgrounds */
+  --color-button-light-hover: #e2e0db; /* the light button on the dark panel, on hover; main text on it: 13.4:1 */
+  --color-row-hover: #f2f2ef; /* a topic row inside a white list, on hover; muted text on it: 6.7:1 */
+
+  /* Explore by topic: one soft hue per topic for its icon badge.
+     -tint: the badge background; -ink: the icon on it (only icons sit on tints, never text).
+     Ink on tint: 5.9:1 or more. Built in OKLCH (tint L 0.95, ink L 0.45), hues spaced 25° or more apart.
+     No flag colours (no greens, saffron or red) and kept away from the three country hues. */
+  --color-topic-economy-tint: #def1ff; /* hue 252, sky */
+  --color-topic-economy-ink: #1f5790;
+  --color-topic-population-tint: #d5f7f4; /* hue 190, teal */
+  --color-topic-population-ink: #006763;
+  --color-topic-health-tint: #fbe7fc; /* hue 325, orchid */
+  --color-topic-health-ink: #733d76;
+  --color-topic-education-tint: #ebecff; /* hue 285, indigo */
+  --color-topic-education-ink: #504a8f;
+  --color-topic-technology-tint: #d5f5fd; /* hue 215, cyan */
+  --color-topic-technology-ink: #00637b;
+  --color-topic-energy-tint: #f6efd5; /* hue 95, sand */
+  --color-topic-energy-ink: #695300;
+  --color-topic-gender-tint: #f4e9ff; /* hue 305, violet */
+  --color-topic-gender-ink: #644386;
+
+  /* Fonts. System fonts only: nothing to download. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-label: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace; /* small uppercase labels */
+
+  /*
+    Type scale. Each size comes with its line height (and letter spacing where
+    needed), so one class like `text-display` sets all three.
+  */
+  --text-display: 3.75rem; /* 60px: the hero headline on wider screens */
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+  --text-title: 2.25rem; /* 36px: the hero headline on phones */
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.02em;
+  --text-heading: 1.5rem; /* 24px: section headings (h2) */
+  --text-heading--line-height: 1.25;
+  --text-heading--letter-spacing: -0.01em;
+  --text-card-title: 1.0625rem; /* 17px: dashboard card titles, a step above the 14px card text */
+  --text-card-title--line-height: 1.35;
+  --text-lead: 1.125rem; /* 18px: the description under a headline */
+  --text-lead--line-height: 1.6;
+  --text-figure: 1.5rem; /* 24px: a key number on phones */
+  --text-figure--line-height: 1.2;
+  --text-figure-lg: 1.875rem; /* 30px: a key number on wider screens */
+  --text-figure-lg--line-height: 1.2;
+  --text-label: 0.75rem; /* 12px: small uppercase labels */
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.05em;
+
+  /*
+    Layout widths, used as max-w-page, max-w-hero-text and so on.
+    (Tailwind reads max-width tokens from the --container-* namespace.)
+    The landing page has three nested widths, all centred on the same line:
+    hero text (narrowest) < stat strip < chart preview (widest).
+  */
+  --container-page: 64rem; /* 1024px: plain landing sections */
+  --container-measure: 40rem; /* about 70 characters of lead text per line */
+  --container-hero-text: 48rem; /* 768px: hero headline, description, buttons; and section intros */
+  --container-stats: 60rem; /* 960px: the hero's stat strip */
+  --container-preview: 72rem; /* 1152px: the featured chart card */
+
+  /* Chart heights (h-chart, sm:h-chart-md, lg:h-chart-lg): taller as the chart gets wider */
+  --spacing-chart: 16rem; /* 256px on phones */
+  --spacing-chart-md: 20rem; /* 320px on tablets */
+  --spacing-chart-lg: 24rem; /* 384px on desktops, so the lines aren't flattened */
+
+  /* Soft shadow for cards that float on a panel (shadow-card). Two layers: a tight edge and a wide, faint lift. */
+  --shadow-card: 0 1px 2px rgb(28 27 25 / 0.06), 0 6px 16px rgb(28 27 25 / 0.07);
+
+  /* Spacing: px-gutter, gap-section, ... */
+  --spacing-gutter: 1rem; /* side padding on phones */
+  --spacing-gutter-wide: 2rem; /* side padding from the sm breakpoint up */
+  --spacing-section: 4rem; /* space between landing sections on phones */
+  --spacing-section-wide: 6rem; /* space between landing sections from sm up */
+}
+
+/*
+  The navbar sticks to the top (12px padding + 56px row + 12px padding = 5rem).
+  When a link jumps to a section, or focus moves down the page, the browser
+  keeps this much room at the top so nothing hides under the navbar.
+*/
+html {
+  scroll-padding-top: 5rem;
+}
+
+/* Numbers line up in columns when every digit has the same width */
+body {
+  background-color: var(--color-page);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+  The faint dot grid behind the hero: one 1px dot every 20px, drawn with a
+  repeating radial gradient. The mask fades it out towards the edges. Static.
+*/
+.hero-dot-grid {
+  background-image: radial-gradient(var(--color-pattern) 1px, transparent 1px);
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 100%);
+}
+
+/*
+  The mountain meadow photo in the "About the data" section, at full brightness.
+  Used on an empty decorative <div aria-hidden="true">, never behind text directly.
+  A CSS background never blocks the page from showing, and screen readers ignore it.
+  The snowy peaks sit about 21–37% down the image; 'center 30%' keeps them in view
+  when the photo is cropped. Static: no `fixed`, no movement.
+*/
+.about-photo {
+  background-color: var(--color-cta); /* shown while the photo loads, or if it fails */
+  background-image: url("/images/about-bg.webp");
+  background-size: cover;
+  background-position: center 30%;
+  background-repeat: no-repeat;
+}
+
+/*
+  Visible focus ring for keyboard users on every link and control.
+  Inside @layer base, so a Tailwind class can still change it where needed
+  (e.g. a lighter ring on a dark background). CSS outside a layer would always win.
+*/
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
